@@ -1,12 +1,25 @@
+using Microsoft.EntityFrameworkCore;
+using UoM.Blazor.Data;
+using UoM.Blazor.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
+builder.Services.ConfigureSqlContext(builder.Configuration);
+builder.Services.ConfigureIdentity();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+    dbContext.Database.EnsureCreated();
+}
+
+    // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -19,6 +32,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

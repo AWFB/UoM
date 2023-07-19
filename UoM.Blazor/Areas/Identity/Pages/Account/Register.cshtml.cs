@@ -1,24 +1,62 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
+using UoM.Blazor.Models;
 
 namespace UoM.Blazor.Areas.Identity.Pages.Account
 {
     public class Register : PageModel
     {
-        private readonly ILogger<Register> _logger;
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
 
-        public Register(ILogger<Register> logger)
+        public Register(SignInManager<User> signInManager, UserManager<User> userManager)
         {
-            _logger = logger;
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
-        public void OnGet()
+        [BindProperty]
+        public InputModel Input { get; set; }
+
+        public async Task<ActionResult> OnPostAsync()
         {
+            if (ModelState.IsValid)
+            {
+                var identity = new User { 
+                    FirstName = Input.FirstName, 
+                    LastName = Input.LastName, 
+                    UserName = Input.Email, 
+                    Email = Input.Email 
+                };
+
+                var result = await _userManager.CreateAsync(identity, Input.Password);
+
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(identity, isPersistent: true);
+                    return LocalRedirect("/");
+                }
+            }
+            return Page();
+        }
+
+        public class InputModel
+        {
+            [Required]
+            public string FirstName { get; set; }
+
+            [Required]
+            public string LastName { get; set; }
+
+            [Required]
+            [EmailAddress]
+            public string Email { get; set; }
+
+            [Required]
+            [DataType(DataType.Password)]
+            public string Password { get; set; }
         }
     }
 }
