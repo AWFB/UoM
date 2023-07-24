@@ -1,0 +1,96 @@
+﻿@page "/assays"
+@using UoM.Blazor.Models;
+@using UoM.Blazor.Services;
+
+@if (Assays != null)
+{
+    <AssayCard>
+        <div class="table-responsive">
+            <table class="table table-borderless mb-0">
+                <tbody>
+                    @foreach (var assay in Assays)
+                    {
+                        <tr class="shadow-lg m-1 assay-row mb-5">
+                            <td class="centered-cell">@assay.AssayId</td>
+                            <td class="centered-cell">@assay.AssayName</td>
+                            <td class="centered-cell @GetDepartmentStyle(assay.Department)">@assay.Department.GetDisplayName()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </AssayCard>
+}
+
+@code {
+    [Inject]
+    private IAssayService AssayService { get; set; }
+
+    private List<Assay>? Assays;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await AssayService.GetAssaysAsync();
+        Assays = response.Assays;
+    }
+
+    private string GetDepartmentStyle(Department department) => department switch
+    {
+        Department.POCT => "poct",
+        Department.Routine => "routine",
+        Department.NBS => "nbs",
+        Department.Metabolic => "metabolic"
+    };
+
+
+    // TODO: 
+    // Create pages for each department
+    // create better db access to be able to findbycondition
+    // switch to repo pattern 
+}
+
+<style>
+    table td,
+    table th {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .table {
+        border-spacing: 0 20px;
+    }
+
+    .card {
+        border-radius: .5rem;
+    }
+
+    .centered-cell {
+        height: 30px;
+        width: 160px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .poct {
+        color: forestgreen;
+        background-color: forestgreen;
+    }
+
+    .routine {
+        color: skyblue;
+        background-color: skyblue;
+    }
+
+    .nbs {
+        color: orange;
+        background-color: orange;
+    }
+
+    .metabolic {
+        color: white;
+        background-color: red !important;
+    }
+</style>
+
+

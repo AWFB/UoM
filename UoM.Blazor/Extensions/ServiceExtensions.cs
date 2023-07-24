@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using UoM.Blazor.Data;
 using UoM.Blazor.Models;
+using UoM.Blazor.Services;
 
 namespace UoM.Blazor.Extensions
 {
@@ -22,7 +23,10 @@ namespace UoM.Blazor.Extensions
         }
 
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) =>
-            services.AddDbContext<DataContext>(opts =>
+            services.AddDbContextFactory<DataContext>(opts =>
                 opts.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
+
+        public static void ConfigureAssayService(this IServiceCollection services) =>
+            services.AddScoped<IAssayService, AssayService>();
     }
 }

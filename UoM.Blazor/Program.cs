@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using UoM.Blazor.Data;
 using UoM.Blazor.Extensions;
+using UoM.Blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,9 @@ builder.Services.AddServerSideBlazor();
 
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureIdentity();
+
+builder.Services.ConfigureAssayService();
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 

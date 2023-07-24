@@ -31,6 +31,7 @@ namespace UoM.Blazor.Areas.Identity.Pages.Account
                     return LocalRedirect("/");
                 }
             }
+            //TODO: Add login validation if failed
             return Page();
         }
 

@@ -1,0 +1,93 @@
+﻿@page "/create-assay"
+@using UoM.Blazor.Models.DTOs;
+@using UoM.Blazor.Models;
+
+<AssayCard>
+    <div class="row">
+        <h3>Create new assay</h3>
+        <div class="form-group">
+            <EditForm Model="@assayForCreation" OnValidSubmit="CreateNewAssay">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-floating mb-3">
+                    <InputSelect @bind-Value="assayForCreation.Department" class="form-select py-3">
+                        
+                        @foreach (Department department in Enum.GetValues(typeof(Department)))
+                        {
+                            <option value="@department">@department.GetDisplayName()</option>
+                        }
+                        <option selected hidden>Choose Department...</option>
+                    </InputSelect>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="assayForCreation.AssayName" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <label for="floatingInput">Assay Name</label>
+                </div>
+
+                <div class="mb-3">
+                    <InputSelect @bind-Value="assayForCreation.AssayGroup" class="form-select py-3">
+                        @foreach (AssayGroup assayGroup in Enum.GetValues(typeof(AssayGroup)))
+                        {
+
+                            <option value="@assayGroup">@assayGroup.GetDisplayName()</option>
+                        }
+                        <option value="" selected hidden>Choose Assay Group...</option>
+                    </InputSelect>
+                </div>
+
+                
+
+                <span class="text-primary">Performance Targets</span>
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="assayForCreation.AnalyticalGoalCVOptimum" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <label for="floatingInput">Optimal Target CV%</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="assayForCreation.AnalyticalGoalCVDesirable" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <label for="floatingInput">Desirable Target CV%</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="assayForCreation.AnalyticalGoalCVMinimum" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <label for="floatingInput">Minimum Target CV%</label>
+                </div>
+
+                <span class="text-primary">Manufacturer quoted performance</span>
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="assayForCreation.KitInsertLowCV" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <label for="floatingInput">Manufacturer Low CV%</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="assayForCreation.KitInsertMediumCV" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <label for="floatingInput">Manufacturer Medium CV%</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputNumber @bind-Value="assayForCreation.KitInsertHighCV" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <label for="floatingInput">Manufacturer Medium CV%</label>
+                </div>
+
+                
+                <button class="btn btn-outline-secondary" type="submit">Create</button>
+            </EditForm>
+        </div>
+    </div>
+</AssayCard>
+
+@code {
+    [Inject]
+    private IAssayService AssayService { get; set; }
+    [Inject]
+    private NavigationManager NavManager { get; set; }
+
+    private AssayForCreationDto assayForCreation = new();
+
+    private async Task CreateNewAssay()
+    {
+        var response = await AssayService.AddAssay(assayForCreation);
+        //NavManager.NavigateTo("/assays");
+    }
+}
