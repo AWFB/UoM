@@ -16,7 +16,7 @@ namespace UoM.Blazor.Areas.Identity.Pages.Account
         }
 
         [BindProperty]
-        public InputModel Input { get; set; }
+        public InputModel Input { get; set; } = new();
         
        
         public async Task<IActionResult> OnPostAsync()
@@ -32,6 +32,7 @@ namespace UoM.Blazor.Areas.Identity.Pages.Account
                 }
             }
             //TODO: Add login validation if failed
+            ModelState.AddModelError(string.Empty, "Invalid Email / Password");
             return Page();
         }
 

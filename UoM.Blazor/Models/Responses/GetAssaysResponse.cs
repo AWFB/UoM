@@ -2,6 +2,6 @@
 {
     public class GetAssaysResponse : ResponseBase
     {
-        public List<Assay>? Assays { get; set; }
+        public List<AssayModel>? Assays { get; set; }
     }
 }

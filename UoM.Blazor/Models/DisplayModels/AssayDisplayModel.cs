@@ -1,16 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using UoM.Blazor.Interfaces;
+using static UoM.Blazor.Models.Enums.AssayEnums;
 
-namespace UoM.Blazor.Models.DTOs
+namespace UoM.Blazor.Models.DisplayModels
 {
-    public record AssayForCreationDto
+    public class AssayDisplayModel : IAssayModel
     {
+        public int AssayId { get; set; }
         [Required]
         public Department Department { get; set; }
         [Required]
-        public AssayGroup? AssayGroup { get; set; }
+        public AssayGroup AssayGroup { get; set; }
         [Required]
         public string? AssayName { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Performance targets
         public double? AnalyticalGoalCVOptimum { get; set; }
@@ -20,5 +22,7 @@ namespace UoM.Blazor.Models.DTOs
         public double? KitInsertLowCV { get; set; }
         public double? KitInsertMediumCV { get; set; }
         public double? KitInsertHighCV { get; set; }
+
+        public List<AssayDataModel>? AssayData { get; set; }
     }
 }

@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using UoM.Blazor.Interfaces;
 
 namespace UoM.Blazor.Models
 {
-    public class AssayData
+    public class AssayDataModel : IAssayData
     {
         public int Id { get; set; }
         public double Mean { get; set; }
@@ -20,6 +21,6 @@ namespace UoM.Blazor.Models
 
         [ForeignKey(nameof(Assay))]
         public int AssayId { get; set; }
-        public Assay? Assay { get; set; }
+        public AssayModel? Assay { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿@page "/create-assay"
+﻿@page "/assay/{assayid:int}"
+@using AutoMapper;
 @using UoM.Blazor.Interfaces;
 @using UoM.Blazor.Models;
 @using UoM.Blazor.Models.DisplayModels;
@@ -7,90 +8,106 @@
 
 <AssayCard>
     <div class="row">
-        <h3>Create new assay</h3>
+        <h3 class="pb-3 text-center">@Assay?.AssayName</h3>
+        <hr />
         <div class="form-group">
-            <EditForm Model="@assayForCreation" OnValidSubmit="CreateNewAssay">
+            <EditForm Model="@assayForEdit" OnValidSubmit="EditAssay">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="form-floating mb-3">
-                    <InputSelect @bind-Value="assayForCreation.Department" class="form-select py-3">
-                        
+                    <InputSelect @bind-Value="assayForEdit.Department" class="form-select py-3">
+
                         @foreach (Department department in Enum.GetValues(typeof(Department)))
                         {
                             <option value="@department">@department.GetDisplayName()</option>
-                        } 
-                        <option selected hidden>Choose Department...</option>
+                        }
                     </InputSelect>
                 </div>
 
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="assayForCreation.AssayName" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <InputText @bind-Value="assayForEdit.AssayName" class="form-control" id="floatingInput" placeholder="Name here" />
                     <label for="floatingInput">Assay Name</label>
                 </div>
 
                 <div class="mb-3">
-                    <InputSelect @bind-Value="assayForCreation.AssayGroup" class="form-select py-3">
+                    <InputSelect @bind-Value="assayForEdit.AssayGroup" class="form-select py-3">
                         @foreach (AssayGroup assayGroup in Enum.GetValues(typeof(AssayGroup)))
                         {
-
                             <option value="@assayGroup">@assayGroup.GetDisplayName()</option>
                         }
-                        <option value="" selected hidden>Choose Assay Group...</option>
                     </InputSelect>
                 </div>
 
-                
+
 
                 <span class="text-primary">Performance Targets</span>
                 <div class="form-floating mb-3">
-                    <InputNumber @bind-Value="assayForCreation.AnalyticalGoalCVOptimum" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <InputNumber @bind-Value="assayForEdit.AnalyticalGoalCVOptimum" class="form-control" id="floatingInput" placeholder="Name here" />
                     <label for="floatingInput">Optimal Target CV%</label>
                 </div>
 
                 <div class="form-floating mb-3">
-                    <InputNumber @bind-Value="assayForCreation.AnalyticalGoalCVDesirable" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <InputNumber @bind-Value="assayForEdit.AnalyticalGoalCVDesirable" class="form-control" id="floatingInput" placeholder="Name here" />
                     <label for="floatingInput">Desirable Target CV%</label>
                 </div>
 
                 <div class="form-floating mb-3">
-                    <InputNumber @bind-Value="assayForCreation.AnalyticalGoalCVMinimum" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <InputNumber @bind-Value="assayForEdit.AnalyticalGoalCVMinimum" class="form-control" id="floatingInput" placeholder="Name here" />
                     <label for="floatingInput">Minimum Target CV%</label>
                 </div>
 
                 <span class="text-primary">Manufacturer quoted performance</span>
                 <div class="form-floating mb-3">
-                    <InputNumber @bind-Value="assayForCreation.KitInsertLowCV" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <InputNumber @bind-Value="assayForEdit.KitInsertLowCV" class="form-control" id="floatingInput" placeholder="Name here" />
                     <label for="floatingInput">Manufacturer Low CV%</label>
                 </div>
 
                 <div class="form-floating mb-3">
-                    <InputNumber @bind-Value="assayForCreation.KitInsertMediumCV" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <InputNumber @bind-Value="assayForEdit.KitInsertMediumCV" class="form-control" id="floatingInput" placeholder="Name here" />
                     <label for="floatingInput">Manufacturer Medium CV%</label>
                 </div>
 
                 <div class="form-floating mb-3">
-                    <InputNumber @bind-Value="assayForCreation.KitInsertHighCV" class="form-control" id="floatingInput" placeholder="Name here" />
+                    <InputNumber @bind-Value="assayForEdit.KitInsertHighCV" class="form-control" id="floatingInput" placeholder="Name here" />
                     <label for="floatingInput">Manufacturer Medium CV%</label>
                 </div>
 
-                
-                <button class="btn btn-outline-secondary" type="submit">Create</button>
+
+                <button class="btn btn-warning" type="submit">Update</button>
             </EditForm>
         </div>
     </div>
 </AssayCard>
-
 @code {
+
     [Inject]
     private IAssayService AssayService { get; set; }
+
     [Inject]
     private NavigationManager NavManager { get; set; }
 
-    private IAssayModel assayForCreation = new AssayDisplayModel();
+    [Inject]
+    private IMapper Mapper { get; set; }
 
-    private async Task CreateNewAssay()
+    [Parameter]
+    public int AssayId { get; set; }
+
+    // this needs to be a DTO
+    private IAssayModel assayForEdit = new AssayDisplayModel();
+
+    private AssayModel? Assay;
+
+    protected override async Task OnInitializedAsync()
     {
-        var response = await AssayService.AddAssay(assayForCreation);
-        NavManager.NavigateTo("/assays");
+        var response = await AssayService.GetAssayAsync(AssayId);
+        Assay = response.Assay;
+
+        assayForEdit = Assay;
     }
+
+    private async Task EditAssay()
+    {
+        var response = await AssayService.EditAssay(assayForEdit);
+    }
+
 }

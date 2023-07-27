@@ -1,6 +1,8 @@
 ﻿@page "/assays"
 @using UoM.Blazor.Models;
+@using UoM.Blazor.Models.Enums;
 @using UoM.Blazor.Services;
+@using static UoM.Blazor.Models.Enums.AssayEnums;
 
 @if (Assays != null)
 {
@@ -14,6 +16,9 @@
                             <td class="centered-cell">@assay.AssayId</td>
                             <td class="centered-cell">@assay.AssayName</td>
                             <td class="centered-cell @GetDepartmentStyle(assay.Department)">@assay.Department.GetDisplayName()</td>
+                            <td class="centered-cell"> 
+                                <TableButton OnClickCallBack="@(() => NavigateToAssayDetail(assay.AssayId))" />
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -26,7 +31,10 @@
     [Inject]
     private IAssayService AssayService { get; set; }
 
-    private List<Assay>? Assays;
+    [Inject]
+    private NavigationManager NavManager { get; set; }
+
+    private List<AssayModel>? Assays;
 
     protected override async Task OnInitializedAsync()
     {
@@ -42,11 +50,17 @@
         Department.Metabolic => "metabolic"
     };
 
+    private void NavigateToAssayDetail(int assayId)
+    {
+        NavManager.NavigateTo($"/assay/{assayId}");
+    }
+
 
     // TODO: 
     // Create pages for each department
     // create better db access to be able to findbycondition
     // switch to repo pattern 
+    // Sort out CSS
 }
 
 <style>
@@ -89,7 +103,7 @@
 
     .metabolic {
         color: white;
-        background-color: red !important;
+        background-color: red;
     }
 </style>
 

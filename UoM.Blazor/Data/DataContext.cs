@@ -8,8 +8,8 @@ namespace UoM.Blazor.Data
     {
         public DataContext(DbContextOptions opts) : base(opts) { }
 
-        public DbSet<Assay> Assays { get; set; }
-        public DbSet<AssayData> AssayData { get; set; }
+        public DbSet<AssayModel> Assays { get; set; }
+        public DbSet<AssayDataModel> AssayData { get; set; }
 
     }
 }
